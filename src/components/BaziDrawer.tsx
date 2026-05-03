@@ -122,16 +122,29 @@ export const BaziDrawer = () => {
           </div>
           
           <div className="mt-6 p-4 rounded-lg bg-celadon-jade/5 border border-celadon-jade/10">
-            <h3 className="text-sm font-serif text-celadon-jade mb-2">Profile Analysis</h3>
-            <div className="space-y-2">
-               <div className="flex justify-between text-xs">
-                 <span className="text-celadon-ink/60">Day Master</span>
-                 <span className="font-medium">{pillars.day.stem}</span>
+            <h3 className="text-sm font-serif text-celadon-jade mb-3 flex items-center space-x-2">
+              <div className="w-1 h-1 bg-celadon-jade rotate-45" />
+              <span>Metaphysical Signature</span>
+            </h3>
+            <div className="space-y-3">
+               <div className="flex justify-between text-xs border-b border-celadon-jade/5 pb-1">
+                 <span className="text-celadon-ink/60">Reference Pillar (DM)</span>
+                 <span className="font-medium text-celadon-jade font-serif">{pillars.day.stem} {pillars.day.branch}</span>
+               </div>
+               <div className="flex justify-between text-xs border-b border-celadon-jade/5 pb-1">
+                 <span className="text-celadon-ink/60">Life Source</span>
+                 <span className="font-medium">{pillars.month.stem === '壬' || pillars.month.stem === '癸' ? 'Fluid' : 'Stable'}</span>
                </div>
                <div className="flex justify-between text-xs">
-                 <span className="text-celadon-ink/60">Zodiac Origin</span>
-                 <span className="font-medium">{pillars.year.branch}</span>
+                 <span className="text-celadon-ink/60">Zodiac Affinity</span>
+                 <span className="font-medium text-celadon-ink">{pillars.year.branch}</span>
                </div>
+            </div>
+            
+            <div className="mt-4 pt-3 border-t border-celadon-jade/10">
+              <p className="text-[10px] italic text-celadon-jade/60 leading-relaxed font-serif">
+                Analysis calibrated to the Celadon Baseline. View the Almanac to see your personal harmony index.
+              </p>
             </div>
           </div>
         </div>

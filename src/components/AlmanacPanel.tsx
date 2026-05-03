@@ -7,9 +7,15 @@ import { ShiChenGrid } from './ShiChenGrid';
 import { CalendarGrid } from './CalendarGrid';
 import { format } from 'date-fns';
 import { ChevronLeft, ChevronRight, Info, Heart } from 'lucide-react';
+import { clsx, type ClassValue } from 'clsx';
+import { twMerge } from 'tailwind-merge';
+
+function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
 
 export const AlmanacPanel = () => {
-  const { selectedDate: rawSelectedDate, setSelectedDate, userBirthData } = useStore();
+  const { selectedDate: rawSelectedDate, setSelectedDate, userBirthData, isPersonalMode, setPersonalMode } = useStore();
   
   const selectedDate = useMemo(() => new Date(rawSelectedDate), [rawSelectedDate]);
   
@@ -28,9 +34,9 @@ export const AlmanacPanel = () => {
   }, [userBirthData]);
 
   const score = useMemo(() => {
-    if (!userPillars) return null;
+    if (!userPillars || !isPersonalMode) return null;
     return calcPersonalScore(userPillars, dayPillars);
-  }, [userPillars, dayPillars]);
+  }, [userPillars, dayPillars, isPersonalMode]);
 
   const changeMonth = (months: number) => {
     const newDate = new Date(selectedDate);
@@ -40,7 +46,7 @@ export const AlmanacPanel = () => {
 
   return (
     <div className="h-full flex flex-col">
-      {/* Header with Navigation */}
+      {/* Header with Navigation & Mode Toggle */}
       <div className="p-4 bg-white border-b border-celadon-jade/10 flex items-center justify-between sticky top-0 z-20">
         <div className="flex items-center space-x-6">
           <div className="flex items-center space-x-2">
@@ -60,6 +66,30 @@ export const AlmanacPanel = () => {
               <ChevronRight className="w-5 h-5" />
             </button>
           </div>
+        </div>
+
+        <div className="flex items-center bg-celadon-bg p-1 rounded-full border border-celadon-jade/10">
+          <button 
+            onClick={() => setPersonalMode(false)}
+            className={cn(
+              "px-4 py-1 rounded-full text-[10px] uppercase tracking-widest transition-all",
+              !isPersonalMode ? "bg-white text-celadon-jade shadow-sm" : "text-celadon-ink/40"
+            )}
+          >
+            General
+          </button>
+          <button 
+            onClick={() => {
+              if (userBirthData) setPersonalMode(true);
+            }}
+            disabled={!userBirthData}
+            className={cn(
+              "px-4 py-1 rounded-full text-[10px] uppercase tracking-widest transition-all disabled:opacity-50",
+              isPersonalMode ? "bg-celadon-jade text-white shadow-sm" : "text-celadon-ink/40"
+            )}
+          >
+            Bazi
+          </button>
         </div>
 
         <div className="flex items-center space-x-3">
@@ -86,17 +116,32 @@ export const AlmanacPanel = () => {
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="text-2xl font-serif text-celadon-ink">{format(selectedDate, 'do MMMM')}</h3>
-                <p className="text-xs text-celadon-jade/60 font-sans tracking-wide">{lunarInfo.ganZhi} Day • {lunarInfo.zodiac} Year</p>
+                <p className="text-xs text-celadon-jade/60 font-sans tracking-wide">
+                  {lunarInfo.ganZhi} Day • <span className="text-celadon-ink/80">{lunarInfo.zodiac} Year</span>
+                </p>
               </div>
-              {score !== null && (
+              {isPersonalMode && score !== null && (
                 <div className="flex flex-col items-center">
-                   <div className="text-[10px] uppercase tracking-tighter text-celadon-jade/40 mb-1">Match</div>
-                   <div className="w-10 h-10 rounded-full border border-celadon-jade/20 flex items-center justify-center">
-                     <span className="text-sm font-serif">{score}</span>
+                   <div className="text-[10px] uppercase tracking-tighter text-celadon-jade/40 mb-1">Harmony</div>
+                   <div className="w-10 h-10 rounded-full border border-celadon-jade bg-celadon-jade/5 flex items-center justify-center">
+                     <span className="text-sm font-serif text-celadon-jade font-bold">{score}</span>
                    </div>
                 </div>
               )}
             </div>
+
+            {isPersonalMode && score !== null && (
+              <div className="p-4 bg-celadon-jade/10 border border-celadon-jade/20 rounded-xl">
+                 <div className="flex items-center space-x-2 text-celadon-jade mb-1">
+                    <Heart className="w-3 h-3 fill-current" />
+                    <span className="text-[10px] uppercase tracking-widest font-sans font-bold">Personal Harmony</span>
+                 </div>
+                 <p className="text-xs text-celadon-ink/80 font-serif leading-relaxed">
+                   Today aligns {score >= 80 ? 'exceptionally well' : score >= 60 ? 'favorably' : 'neutrally'} with your Day Master. 
+                   {score >= 80 ? ' A perfect day for significant life events.' : ''}
+                 </p>
+              </div>
+            )}
 
             <div className="grid grid-cols-2 gap-3">
                <div className="p-3 bg-celadon-bg rounded-lg border border-celadon-jade-light/20">
