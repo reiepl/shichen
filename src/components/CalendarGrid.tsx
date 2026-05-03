@@ -31,7 +31,7 @@ const STEM_COLORS: Record<string, string> = {
 };
 
 export const CalendarGrid = () => {
-  const { selectedDate: rawSelectedDate, setSelectedDate } = useStore();
+  const { selectedDate: rawSelectedDate, setSelectedDate, showTianYi, showTianDe } = useStore();
   const selectedDate = useMemo(() => new Date(rawSelectedDate), [rawSelectedDate]);
 
   const days = useMemo(() => {
@@ -89,19 +89,24 @@ export const CalendarGrid = () => {
                 )}
               </div>
 
-              {/* GanZhi (11px, element-colored) */}
-              <span className={cn("text-[11px] font-serif font-medium", stemColor)}>
-                {lunar.ganZhi.substring(0, 2)}
-              </span>
+              {/* GanZhi (11px, element-colored) + Officer */}
+              <div className="flex items-center space-x-1">
+                <span className={cn("text-[11px] font-serif font-medium", stemColor)}>
+                  {lunar.ganZhi.substring(0, 2)}
+                </span>
+                <span className="text-[10px] text-celadon-jade font-sans px-0.5 rounded bg-celadon-jade/5 border border-celadon-jade/10">
+                  {lunar.officer}
+                </span>
+              </div>
 
               {/* Tags (Virtue / Noble) */}
               <div className="flex flex-col items-center space-y-0.5 min-h-[28px] justify-center">
-                {lunar.isHeavenlyVirtue && (
+                {(showTianDe && lunar.isHeavenlyVirtue) && (
                   <div className="text-[9px] bg-celadon-jade/10 text-celadon-jade px-1 rounded border border-celadon-jade/20 leading-tight">
                     天德
                   </div>
                 )}
-                {lunar.isHeavenlyNoble && (
+                {(showTianYi && lunar.isHeavenlyNoble) && (
                   <div className="text-[9px] bg-celadon-gold/10 text-celadon-gold px-1 rounded border border-celadon-gold/20 leading-tight">
                     天乙
                   </div>

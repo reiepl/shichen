@@ -22,6 +22,23 @@ export const almanac = {
   THREE_HARMONIES,
   CLASH_PAIRS,
   
+  // Branch to English Name
+  BRANCH_EN: {
+    '子': 'Rat', '丑': 'Ox', '寅': 'Tiger', '卯': 'Rabbit',
+    '辰': 'Dragon', '巳': 'Snake', '午': 'Horse', '未': 'Goat',
+    '申': 'Monkey', '酉': 'Rooster', '戌': 'Dog', '亥': 'Pig'
+  } as Record<string, string>,
+
+  getTripleHarmony: (branch: string) => {
+    const found = THREE_HARMONIES.find(group => (group as any).branches.includes(branch as any));
+    return found ? (found as any).branches as string[] : [];
+  },
+
+  getSixHarmony: (branch: string) => {
+    const pair = HARMONY_PAIRS.find(([a, b]) => a === branch || b === branch);
+    return pair ? (pair[0] === branch ? pair[1] : pair[0]) : '';
+  },
+  
   // Lunar helpers
   getLunarInfo: (date: Date | string) => {
     const solar = Solar.fromDate(new Date(date));
@@ -54,6 +71,7 @@ export const almanac = {
       festivals: [...lunar.getFestivals(), ...lunar.getOtherFestivals()],
       zodiac: lunar.getYearShengXiao(),
       ganZhi: lunar.getDayInGanZhi(),
+      officer: lunar.getZhiXing(),
       yi: lunar.getDayYi(),
       ji: lunar.getDayJi(),
       isHeavenlyVirtue,

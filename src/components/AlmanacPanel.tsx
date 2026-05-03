@@ -15,7 +15,17 @@ function cn(...inputs: ClassValue[]) {
 }
 
 export const AlmanacPanel = () => {
-  const { selectedDate: rawSelectedDate, setSelectedDate, userBirthData, isPersonalMode, setPersonalMode } = useStore();
+  const { 
+    selectedDate: rawSelectedDate, 
+    setSelectedDate, 
+    userBirthData, 
+    isPersonalMode, 
+    setPersonalMode,
+    showTianYi,
+    showTianDe,
+    setTianYi,
+    setTianDe
+  } = useStore();
   
   const selectedDate = useMemo(() => new Date(rawSelectedDate), [rawSelectedDate]);
   
@@ -68,28 +78,51 @@ export const AlmanacPanel = () => {
           </div>
         </div>
 
-        <div className="flex items-center bg-celadon-bg p-1 rounded-full border border-celadon-jade/10">
-          <button 
-            onClick={() => setPersonalMode(false)}
-            className={cn(
-              "px-4 py-1 rounded-full text-[10px] uppercase tracking-widest transition-all",
-              !isPersonalMode ? "bg-white text-celadon-jade shadow-sm" : "text-celadon-ink/40"
-            )}
-          >
-            General
-          </button>
-          <button 
-            onClick={() => {
-              if (userBirthData) setPersonalMode(true);
-            }}
-            disabled={!userBirthData}
-            className={cn(
-              "px-4 py-1 rounded-full text-[10px] uppercase tracking-widest transition-all disabled:opacity-50",
-              isPersonalMode ? "bg-celadon-jade text-white shadow-sm" : "text-celadon-ink/40"
-            )}
-          >
-            Bazi
-          </button>
+        <div className="flex items-center space-x-4">
+          <div className="hidden sm:flex items-center bg-celadon-bg p-1 rounded-lg border border-celadon-jade/10 space-x-1">
+            <button 
+              onClick={() => setTianYi(!showTianYi)}
+              className={cn(
+                "px-2 py-1 rounded text-[9px] uppercase tracking-widest transition-all",
+                showTianYi ? "bg-celadon-gold text-white shadow-sm" : "text-celadon-gold/40"
+              )}
+            >
+              Tian Yi
+            </button>
+            <button 
+              onClick={() => setTianDe(!showTianDe)}
+              className={cn(
+                "px-2 py-1 rounded text-[9px] uppercase tracking-widest transition-all",
+                showTianDe ? "bg-celadon-jade text-white shadow-sm" : "text-celadon-jade/40"
+              )}
+            >
+              Tian De
+            </button>
+          </div>
+
+          <div className="flex items-center bg-celadon-bg p-1 rounded-full border border-celadon-jade/10">
+            <button 
+              onClick={() => setPersonalMode(false)}
+              className={cn(
+                "px-4 py-1 rounded-full text-[10px] uppercase tracking-widest transition-all",
+                !isPersonalMode ? "bg-white text-celadon-jade shadow-sm" : "text-celadon-ink/40"
+              )}
+            >
+              General
+            </button>
+            <button 
+              onClick={() => {
+                if (userBirthData) setPersonalMode(true);
+              }}
+              disabled={!userBirthData}
+              className={cn(
+                "px-4 py-1 rounded-full text-[10px] uppercase tracking-widest transition-all disabled:opacity-50",
+                isPersonalMode ? "bg-celadon-jade text-white shadow-sm" : "text-celadon-ink/40"
+              )}
+            >
+              Bazi
+            </button>
+          </div>
         </div>
 
         <div className="flex items-center space-x-3">

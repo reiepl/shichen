@@ -12,9 +12,13 @@ interface AlmanacState {
   userBirthData: UserBazi | null;
   selectedDate: Date;
   isPersonalMode: boolean;
+  showTianYi: boolean;
+  showTianDe: boolean;
   setUserBirthData: (data: UserBazi | null) => void;
   setSelectedDate: (date: Date) => void;
   setPersonalMode: (active: boolean) => void;
+  setTianYi: (show: boolean) => void;
+  setTianDe: (show: boolean) => void;
 }
 
 export const useStore = create<AlmanacState>()(
@@ -23,12 +27,16 @@ export const useStore = create<AlmanacState>()(
       userBirthData: null,
       selectedDate: new Date(),
       isPersonalMode: false,
+      showTianYi: true,
+      showTianDe: true,
       setUserBirthData: (data) => set({ 
         userBirthData: data,
         isPersonalMode: !!data 
       }),
       setSelectedDate: (date) => set({ selectedDate: date }),
       setPersonalMode: (active) => set({ isPersonalMode: active }),
+      setTianYi: (show) => set({ showTianYi: show }),
+      setTianDe: (show) => set({ showTianDe: show }),
     }),
     {
       name: 'celadon-almanac-storage',
