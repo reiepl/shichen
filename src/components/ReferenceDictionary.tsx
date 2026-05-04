@@ -13,6 +13,7 @@ interface StarDefinition {
   level: 'Omega' | 'Alpha' | 'Beta' | 'Gamma';
   description: string;
   details?: string[];
+  application?: string[];
 }
 
 const STAR_LEVELS = [
@@ -29,10 +30,13 @@ const DEFINITIONS: StarDefinition[] = [
     level: "Alpha",
     description: "The highest-ranking nobleman star. Positioned just below omega-level titan stars. Embodies inspiration, guidance, and assisted by capable influencers.",
     details: [
-      "Attracts high-ranking helpers, mentors, and sponsors who offer timely solutions.",
-      "Ensures the right person or insight appears during critical moments or high-stakes crises.",
-      "Ideal for networking, scheduling meetings, or activities where one seeks inspiration.",
-      "Personalized usage is maximized by matching with individual destiny charts."
+      "Crisis Intervention: Ensures the right person appears at critical moments when stakes are high, can intervene to pull you out of the fire.",
+      "Attracts capable, powerful, and high-ranking figures such as mentors, sponsors, and influential protectors who offer timely solutions.",
+      "Relationship Mitigation: Sends the right solution during moments of friction or tension.",
+      "Inspiration: Meeting during nobleman hours can provoke new insights or ideas."
+    ],
+    application: [
+      "Once a Heavenly Yi Nobleman day or hour is identified, it is considered an ideal time for activities such as networking, scheduling important meetings, or seeking guidance to provoke new insights and solutions."
     ]
   },
   {
@@ -53,7 +57,7 @@ const CONCEPTS = [
   {
     name: "Helpful People (Noblemen)",
     chinese: "贵人 (Gui Ren)",
-    description: "Key figures such as mentors, sponsors, or influential individuals who provide timely assistance, solutions, or inspiration. Utilizing the energy of these stars allows an individual to activate transformation and inspiration in their life.",
+    description: "Personal to you and indicate when nobleman energy is specifically directed toward your chart. Key figures such as mentors, sponsors, or influential individuals who provide timely assistance, solutions, or inspiration. Utilizing the energy of these stars allows an individual to activate transformation and inspiration in their life. personal to you and indicate when nobleman energy is specifically directed toward your chart",
     purposes: [
       "Gaining Insights: Meeting during nobleman hours can provoke new insights or ideas.",
       "Crisis Intervention: Ensures the right person appears at critical moments when stakes are high.",
@@ -67,7 +71,7 @@ const CONCEPTS = [
   {
     name: "Harmony Partner",
     chinese: "六合 (Liu He)",
-    description: "A personal star used to harmonize and attract connections. It acts as an important component for attracting noblemen and connecting people into your life.",
+    description: "A personal star (indicate days ideal for) used to harmonize and attract connections e.g. noblemen  into your life.",
     details: [
       "Identification: Determined personally based on your date and time of birth.",
       "Application: Match your personal harmony sign with a calendar date containing beneficial stars.",
@@ -157,6 +161,18 @@ export const ReferenceDictionary = () => {
                       </li>
                     ))}
                   </ul>
+                )}
+                {s.application && (
+                  <div className="mt-2 pt-2 border-t border-celadon-jade/5">
+                    <span className="text-[8px] uppercase tracking-wider text-celadon-jade/60 font-bold block mb-1">Application</span>
+                    <ul className="space-y-1">
+                      {s.application.map((a, i) => (
+                        <li key={i} className="text-[9px] text-celadon-ink/60 leading-relaxed">
+                          {a}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
                 )}
               </div>
             </div>

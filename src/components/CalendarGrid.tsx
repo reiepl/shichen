@@ -31,8 +31,15 @@ const STEM_COLORS: Record<string, string> = {
 };
 
 export const CalendarGrid = () => {
-  const { selectedDate: rawSelectedDate, setSelectedDate, showTianYi, showTianDe } = useStore();
+  const { selectedDate: rawSelectedDate, setSelectedDate, activeStar, activePurpose, userBirthData } = useStore();
   const selectedDate = useMemo(() => new Date(rawSelectedDate), [rawSelectedDate]);
+
+  const userDayBranch = useMemo(() => {
+    if (!userBirthData) return null;
+    const userDate = new Date(userBirthData.birthYear, userBirthData.birthMonth - 1, userBirthData.birthDay, userBirthData.birthHour);
+    const p = almanac.getPillars(userDate);
+    return p.day.branch;
+  }, [userBirthData]);
 
   const days = useMemo(() => {
     const start = startOfWeek(startOfMonth(selectedDate));
@@ -55,8 +62,25 @@ export const CalendarGrid = () => {
           const isSelected = isSameDay(date, selectedDate);
           const isCurrentMonth = date.getMonth() === selectedDate.getMonth();
           const lunar = almanac.getLunarInfo(date);
-          const stem = lunar.ganZhi.substring(0, 1);
-          const stemColor = STEM_COLORS[stem] || 'text-celadon-jade';
+          const dayBranch = lunar.ganZhi.substring(1, 2);
+          const dayStem = lunar.ganZhi.substring(0, 1);
+          const stemColor = STEM_COLORS[dayStem] || 'text-celadon-jade';
+
+          const hasStarFilter = !!activeStar;
+          const hasPurposeFilter = !!activePurpose;
+
+          const starMatch = !hasStarFilter || (
+            activeStar === 'tian-yi' ? lunar.isHeavenlyNoble : lunar.isHeavenlyVirtue
+          );
+
+          const purposeMatch = !hasPurposeFilter || (
+            activePurpose === 'helpful-people' 
+              ? (userDayBranch && almanac.getTripleHarmony(userDayBranch).includes(dayBranch))
+              : (userDayBranch && almanac.getSixHarmony(userDayBranch) === dayBranch)
+          );
+
+          const isMatch = (hasStarFilter || hasPurposeFilter) && starMatch && purposeMatch;
+          const isDimmed = (hasStarFilter || hasPurposeFilter) && !isMatch;
 
           return (
             <button
@@ -64,8 +88,10 @@ export const CalendarGrid = () => {
               onClick={() => setSelectedDate(date)}
               className={cn(
                 "relative flex flex-col items-center justify-between py-2 border-r border-b border-celadon-jade/5 transition-all group min-h-[100px]",
-                !isCurrentMonth && "opacity-20",
-                isSelected ? "bg-celadon-jade-light/10" : "bg-white hover:bg-celadon-bg/50"
+                (!isCurrentMonth || isDimmed) && "opacity-40 grayscale-[0.5]",
+                isSelected ? "bg-celadon-jade-light/10" : "bg-white hover:bg-celadon-bg/50",
+                isMatch && "ring-2 ring-inset ring-celadon-jade/40 bg-celadon-jade/5 z-10 scale-[1.02] shadow-xl",
+                isMatch && hasStarFilter && activeStar === 'tian-yi' && "ring-celadon-gold/50 bg-celadon-gold/5"
               )}
             >
               {/* Gregorian Day (16px, ink black) */}
@@ -91,9 +117,14 @@ export const CalendarGrid = () => {
 
               {/* GanZhi (11px, element-colored) + Officer */}
               <div className="flex items-center space-x-1">
-                <span className={cn("text-[11px] font-serif font-medium", stemColor)}>
-                  {lunar.ganZhi.substring(0, 2)}
-                </span>
+                <div className="flex items-center text-[11px] font-serif font-medium">
+                  <span className={stemColor}>{dayStem}</span>
+                  <span className={cn(
+                    hasPurposeFilter && purposeMatch ? "bg-celadon-jade text-white px-0.5 rounded ml-0.5" : "text-celadon-ink/70"
+                  )}>
+                    {dayBranch}
+                  </span>
+                </div>
                 <span className="text-[10px] text-celadon-jade font-sans px-0.5 rounded bg-celadon-jade/5 border border-celadon-jade/10">
                   {lunar.officer}
                 </span>
@@ -101,13 +132,19 @@ export const CalendarGrid = () => {
 
               {/* Tags (Virtue / Noble) */}
               <div className="flex flex-col items-center space-y-0.5 min-h-[28px] justify-center">
-                {(showTianDe && lunar.isHeavenlyVirtue) && (
-                  <div className="text-[9px] bg-celadon-jade/10 text-celadon-jade px-1 rounded border border-celadon-jade/20 leading-tight">
+                {lunar.isHeavenlyVirtue && (
+                  <div className={cn(
+                    "text-[9px] px-1 rounded border leading-tight transition-all",
+                    activeStar === 'tian-de' ? "bg-celadon-jade text-white border-celadon-jade" : "bg-celadon-jade/10 text-celadon-jade border-celadon-jade/20"
+                  )}>
                     天德
                   </div>
                 )}
-                {(showTianYi && lunar.isHeavenlyNoble) && (
-                  <div className="text-[9px] bg-celadon-gold/10 text-celadon-gold px-1 rounded border border-celadon-gold/20 leading-tight">
+                {lunar.isHeavenlyNoble && (
+                  <div className={cn(
+                    "text-[9px] px-1 rounded border leading-tight transition-all",
+                    activeStar === 'tian-yi' ? "bg-celadon-gold text-white border-celadon-gold" : "bg-celadon-gold/10 text-celadon-gold border-celadon-gold/20"
+                  )}>
                     天乙
                   </div>
                 )}
@@ -117,8 +154,8 @@ export const CalendarGrid = () => {
               <div className="h-2 flex items-center justify-center">
                  {lunar.yi.length > 5 && (
                    <div className={cn(
-                     "w-1.5 h-1.5 rounded-full",
-                     lunar.yi.length > 15 ? "bg-celadon-jade shadow-[0_0_4px_rgba(74,130,110,0.5)]" : "bg-celadon-jade/30"
+                     "w-1.5 h-1.5 rounded-full transition-all",
+                     lunar.yi.length > 15 || isMatch ? "bg-celadon-jade shadow-[0_0_8px_rgba(74,130,110,0.8)] scale-125" : "bg-celadon-jade/30"
                    )} />
                  )}
               </div>

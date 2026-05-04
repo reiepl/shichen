@@ -21,10 +21,10 @@ export const AlmanacPanel = () => {
     userBirthData, 
     isPersonalMode, 
     setPersonalMode,
-    showTianYi,
-    showTianDe,
-    setTianYi,
-    setTianDe
+    activeStar,
+    activePurpose,
+    setStarHighlight,
+    setPurposeHighlight
   } = useStore();
   
   const selectedDate = useMemo(() => new Date(rawSelectedDate), [rawSelectedDate]);
@@ -79,27 +79,6 @@ export const AlmanacPanel = () => {
         </div>
 
         <div className="flex items-center space-x-4">
-          <div className="hidden sm:flex items-center bg-celadon-bg p-1 rounded-lg border border-celadon-jade/10 space-x-1">
-            <button 
-              onClick={() => setTianYi(!showTianYi)}
-              className={cn(
-                "px-2 py-1 rounded text-[9px] uppercase tracking-widest transition-all",
-                showTianYi ? "bg-celadon-gold text-white shadow-sm" : "text-celadon-gold/40"
-              )}
-            >
-              Tian Yi
-            </button>
-            <button 
-              onClick={() => setTianDe(!showTianDe)}
-              className={cn(
-                "px-2 py-1 rounded text-[9px] uppercase tracking-widest transition-all",
-                showTianDe ? "bg-celadon-jade text-white shadow-sm" : "text-celadon-jade/40"
-              )}
-            >
-              Tian De
-            </button>
-          </div>
-
           <div className="flex items-center bg-celadon-bg p-1 rounded-full border border-celadon-jade/10">
             <button 
               onClick={() => setPersonalMode(false)}
@@ -132,6 +111,57 @@ export const AlmanacPanel = () => {
           >
             Today
           </button>
+        </div>
+      </div>
+
+      {/* Quick Action Highlight Filters */}
+      <div className="px-6 py-3 bg-white border-b border-celadon-jade/5 flex flex-wrap items-center gap-6">
+        <div className="flex items-center space-x-3">
+          <span className="text-[10px] uppercase tracking-tighter text-celadon-jade/40 font-bold">Stars</span>
+          <div className="flex items-center space-x-1.5">
+            {[
+              { id: 'tian-yi', label: '天乙' },
+              { id: 'tian-de', label: '天德' }
+            ].map(star => (
+              <button
+                key={star.id}
+                onClick={() => setStarHighlight(activeStar === star.id ? null : star.id)}
+                className={cn(
+                  "px-3 py-1 rounded-full text-[10px] font-medium border transition-all",
+                  activeStar === star.id 
+                    ? "bg-celadon-gold text-white border-celadon-gold shadow-md scale-105" 
+                    : "bg-white text-celadon-ink/60 border-celadon-jade/10 hover:border-celadon-gold/30 hover:text-celadon-gold"
+                )}
+              >
+                {star.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="flex items-center space-x-3">
+          <span className="text-[10px] uppercase tracking-tighter text-celadon-jade/40 font-bold">Purpose</span>
+          <div className="flex items-center space-x-1.5">
+            {[
+              { id: 'helpful-people', label: 'Helpful People', disabled: !userBirthData },
+              { id: 'harmony', label: 'Harmony', disabled: !userBirthData }
+            ].map(p => (
+              <button
+                key={p.id}
+                disabled={p.disabled}
+                onClick={() => setPurposeHighlight(activePurpose === p.id ? null : p.id)}
+                className={cn(
+                  "px-3 py-1 rounded-full text-[10px] font-medium border transition-all relative overflow-hidden group",
+                  activePurpose === p.id 
+                    ? "bg-celadon-jade text-white border-celadon-jade shadow-md scale-105" 
+                    : "bg-white text-celadon-ink/60 border-celadon-jade/10 hover:border-celadon-jade/30 hover:text-celadon-jade",
+                  p.disabled && "opacity-40 cursor-not-allowed grayscale"
+                )}
+              >
+                {p.label}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
