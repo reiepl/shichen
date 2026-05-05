@@ -14,11 +14,13 @@ interface AlmanacState {
   isPersonalMode: boolean;
   activeStar: string | null;
   activePurpose: string | null;
+  isProfileOpen: boolean;
   setUserBirthData: (data: UserBazi | null) => void;
   setSelectedDate: (date: Date) => void;
   setPersonalMode: (active: boolean) => void;
   setStarHighlight: (star: string | null) => void;
   setPurposeHighlight: (purpose: string | null) => void;
+  setProfileOpen: (open: boolean) => void;
 }
 
 export const useStore = create<AlmanacState>()(
@@ -29,6 +31,7 @@ export const useStore = create<AlmanacState>()(
       isPersonalMode: false,
       activeStar: null,
       activePurpose: null,
+      isProfileOpen: true,
       setUserBirthData: (data) => set({ 
         userBirthData: data,
         isPersonalMode: !!data 
@@ -37,6 +40,7 @@ export const useStore = create<AlmanacState>()(
       setPersonalMode: (active) => set({ isPersonalMode: active }),
       setStarHighlight: (star) => set({ activeStar: star }),
       setPurposeHighlight: (purpose) => set({ activePurpose: purpose }),
+      setProfileOpen: (open) => set({ isProfileOpen: open }),
     }),
     {
       name: 'celadon-almanac-storage',
